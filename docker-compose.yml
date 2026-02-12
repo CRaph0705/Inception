@@ -5,4 +5,7 @@ services:
     build: requirements/nginx/.
     container_name: nginx
     ports:
-      - "8080:80"
+      - "555:555"
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wp-php
