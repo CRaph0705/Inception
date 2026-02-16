@@ -9,3 +9,11 @@ services:
   wordpress:
     build: requirements/wordpress/.
     container_name: wp-php
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE:
+      MYSQL_USER:
+      MYSQL_PASSWORD:

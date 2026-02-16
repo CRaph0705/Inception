@@ -1,0 +1,33 @@
+docker compose :
+- volumes
+- networks
+- restart policy
+- mariadb
+- dependencies
+- env variables
+
+
+3 containers, intern communication, no direct access to mariadb, only nginx, tls, persisting volumes
+
+nginx :
+- reverse proxy
+- tls (open ssl)
+- certificat auto signe
+- port 442 uniquement
+
+-> installer openssl
+-> generer certificat
+-> configurer nginx.conf
+
+wordpress :
+- php-mysql
+- wget / curl
+- configurer php fpm
+- istallation wordpress
+- connexion mariadb
+
+mariadb :
+- initialiser bdd
+- creer user
+- creer base wordpress
+- gerer variable env via docker compose
