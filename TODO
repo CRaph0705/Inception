@@ -31,3 +31,8 @@ mariadb :
 - creer user
 - creer base wordpress
 - gerer variable env via docker compose
+
+
+
+-> terminer service mariadb dans docker compose
+-> creer network commun

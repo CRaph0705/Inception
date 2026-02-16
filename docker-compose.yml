@@ -1,19 +1,47 @@
 version: "3.8"
 
 services:
-  nginx:
-    build: requirements/nginx/.
-    container_name: nginx
-    ports:
-      - "555:555"
-  wordpress:
-    build: requirements/wordpress/.
-    container_name: wp-php
   mariadb:
     build: requirements/mariadb/.
     container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE:
-      MYSQL_USER:
-      MYSQL_PASSWORD:
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
+
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wordpress
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+
+  nginx:
+    build: requirements/nginx/.
+    container_name: nginx
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - nginx_data:/var/www/html
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+
+volumes:
+  mariadb_data:
+  wordpress_data:
+
+networks:
+  inception:
+    driver: bridge
