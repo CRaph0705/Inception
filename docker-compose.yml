@@ -39,8 +39,8 @@ services:
       - inception
 
 volumes:
-  - mariadb_data: /var/lib/mysql
-  - wordpress_data: /var/www/html
+  mariadb_data:
+  wordpress_data:
 
 networks:
   inception:
