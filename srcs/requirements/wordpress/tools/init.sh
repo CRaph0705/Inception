@@ -22,4 +22,4 @@ if [ ! -f wp-config.php ]; then
     sed -i "s/localhost/mariadb/" wp-config.php
 fi
 
-exec php-fpm7.4 -F
+exec php-fpm -F
