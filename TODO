@@ -45,7 +45,7 @@ mariadb :
 -> refaireu n tour du sujet
 
 -> sécuriser mariadb (rendre inaccessible externe)
--> nginx tls
+-> nginx tls : https://nginx.org/en/docs/beginners_guide.html#:~:text=The%20way%20nginx%20and%20its,%2Flocal%2Fetc%2Fnginx%20.
 -> check architecture
 
 - version php fpm 7.4 avec bullseye : https://packages.debian.org/bullseye/php-fpm
