@@ -36,3 +36,16 @@ mariadb :
 
 -> terminer service mariadb dans docker compose
 -> creer network commun
+
+
+-> configurer nginx avec ssl
+-> générer certificat auto signé
+-> configurer php fpm socket (?)
+-> peaufiner le makefile
+-> refaireu n tour du sujet
+
+-> sécuriser mariadb (rendre inaccessible externe)
+-> nginx tls
+-> check architecture
+
+- version php fpm 8.2 avec bullseye ?? trouver info > script init à update en fonction

@@ -27,3 +27,7 @@ up:
 
 down:
 	docker-compose -f .srcs/docker-compose.yml down
+
+reset:
+	docker-compose down -v
+	docker system prune -a

@@ -1,5 +1,12 @@
 FROM debian:bullseye
 
-RUN apt update && apt install -y php-fpm
+RUN apt update && apt install -y php-fpm php-mysql curl
 
-CMD ["php-fpm8.2", "-F"]
+COPY tools/init.sh /init.sh
+RUN chmod +x /init.sh
+
+EXPOSE 9000
+
+ENTRYPOINT ["/init.sh"]
+
+# CMD ["php-fpm8.2", "-F"]
