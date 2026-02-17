@@ -2,9 +2,13 @@
 # must set up your entire application (i.e., it has to build the Docker images using
 # docker-compose.yml).
 
-.PHONY : all up down install build start stop status
+.PHONY : all up down install build start stop status clean fclean re
 
-LOCALHOST=http:`/`/127.0.0.1
+NAME = inception
+LOCALHOST = http:`/`/127.0.0.1
+
+all: up
+
 install :
 
 build:
@@ -23,11 +27,19 @@ stop:
 	docker-compose -f .srcs/docker-compose.yml stop
 
 up:
-	docker-compose -f .srcs/docker-compose.yml up
+	docker-compose -d up
 
 down:
-	docker-compose -f .srcs/docker-compose.yml down
+	docker-compose -d down
 
 reset:
 	docker-compose down -v
 	docker system prune -a
+
+
+clean:
+
+fclean: clean
+	docker system prune -a
+
+re: fclean build up

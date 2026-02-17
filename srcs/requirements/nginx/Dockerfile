@@ -1,6 +1,14 @@
 FROM debian:bullseye
 
-RUN apt update && apt install -y nginx
+RUN apt update && apt install -y nginx openssl
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY tools/init.sh /init.sh
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+
+RUN chmod +x /init.sh
+
+EXPOSE 443
+
+ENTRYPOINT ["/init.sh"]
+# CMD ["nginx", "-g", "daemon off;"]
 
