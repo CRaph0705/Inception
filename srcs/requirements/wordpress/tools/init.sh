@@ -2,6 +2,12 @@
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
+echo "waiting MariaDB"
+
+while ! mysqladmin ping -h mariadb --silent; do
+    sleep 1
+done
+
 mkdir -p /var/www/html
 cd /var/www/html
 
