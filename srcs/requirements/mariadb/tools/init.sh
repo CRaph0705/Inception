@@ -1,10 +1,15 @@
 #!/bin/bash
 
-service mariadb start
+if [ ! -d "/var/lib/mysql/mysql" ]; then
 
-sleep 5
+    echo "Initializing MariaDB..."
 
-mysql -u root << EOF
+    mysqld --initialize-insecure --user=mysql
+    mysqld_safe &
+
+    sleep 5
+
+    mysql -u root << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
@@ -17,6 +22,8 @@ GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
+    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
+
+fi
 
 exec mysqld_safe

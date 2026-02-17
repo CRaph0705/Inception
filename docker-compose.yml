@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mariadb:
-    build: requirements/mariadb/.
+    build: requirements/mariadb
     container_name: mariadb
     restart: always
     env_file:
@@ -17,7 +17,7 @@ services:
     container_name: wordpress
     restart: always
     env_file:
-      - .env.local
+      - .env.local # changer par .env pour correction
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
@@ -32,7 +32,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - nginx_data:/var/www/html
+      - wordpress_data:/var/www/html
     depends_on:
       - wordpress
     networks:

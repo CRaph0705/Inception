@@ -2,24 +2,37 @@
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
+echo "waiting MariaDB"
+
+while ! mysqladmin ping -h mariadb --silent; do
+    sleep 1
+done
+
+echo "MariaDB OK"
+
 mkdir -p /var/www/html
 cd /var/www/html
 
 if [ ! -f wp-config.php ]; then
 
-    curl -O https://wordpress.org/latest.tar.gz
-    tar -xzf latest.tar.gz
-    mv wordpress/* .
-    rm -rf wordpress latest.tar.gz
+    wp core download --allow-root
 
-    chown -R www-data:www-data /var/www/html # Set ownership to www-data for WordPress files to ensure proper permissions.
+    wp config create \
+        --dbname=${MYSQL_DATABASE} \
+        --dbuser=${MYSQL_USER} \
+        --dbpass=${MYSQL_PASSWORD} \
+        --dbhost=mariadb \
+        --allow-root
 
-    cp wp-config-sample.php wp-config.php
+    wp core install \
+        --url=https://${DOMAIN_NAME} \
+        --title="Inception" \
+        --admin_user=${WP_ADMIN_USER} \
+        --admin_password=${WP_ADMIN_PASSWORD} \
+        --admin_email=${WP_ADMIN_EMAIL} \
+        --allow-root
 
-    sed -i "s/database_name_here/${MYSQL_DATABASE}/" wp-config.php
-    sed -i "s/username_here/${MYSQL_USER}/" wp-config.php
-    sed -i "s/password_here/${MYSQL_PASSWORD}/" wp-config.php
-    sed -i "s/localhost/mariadb/" wp-config.php
+    chown -R www-data:www-data /var/www/html
 fi
 
-exec php-fpm7.4 -F
+exec php-fpm -F
