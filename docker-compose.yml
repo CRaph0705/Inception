@@ -43,5 +43,5 @@ volumes:
   wordpress_data:
 
 networks:
-  - inception:
+  inception:
     driver: bridge
