@@ -48,4 +48,4 @@ mariadb :
 -> nginx tls
 -> check architecture
 
-- version php fpm 8.2 avec bullseye ?? trouver info > script init à update en fonction
+- version php fpm 7.4 avec bullseye : https://packages.debian.org/bullseye/php-fpm

@@ -9,4 +9,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["/init.sh"]
 
-# CMD ["php-fpm8.2", "-F"]
+# CMD ["php-fpm7.4", "-F"]
