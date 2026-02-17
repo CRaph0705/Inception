@@ -38,8 +38,11 @@ reset:
 
 
 clean:
+	docker compose down -v
 
 fclean: clean
 	docker system prune -a
 
-re: fclean build up
+re: fclean
+	docker compose build --no-cache
+	docker compose up -d
