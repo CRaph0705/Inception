@@ -33,6 +33,8 @@ if [ ! -f wp-config.php ]; then
         --allow-root
 
     chown -R www-data:www-data /var/www/html
+    chmod -R 755 /var/www/html
+
 fi
 
 exec php-fpm -F

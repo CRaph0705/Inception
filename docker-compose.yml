@@ -6,8 +6,8 @@ services:
     container_name: mariadb
     restart: always
     env_file:
-      - .env
-    # - .env.local # changer par .env pour correction
+    # - .env
+      - .env.local # changer par .env pour correction
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -18,8 +18,8 @@ services:
     container_name: wordpress
     restart: always
     env_file:
-      - .env
-      # - .env.local # changer par .env pour correction
+      # - .env
+      - .env.local # changer par .env pour correction
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
