@@ -6,43 +6,35 @@
 
 NAME = inception
 LOCALHOST = http:`/`/127.0.0.1
+DATA_DIR = /home/rcochran/data
 
 all: up
 
-install :
-
-build:
-	docker compose up --build
-
-open:
-	xdg-open $(LOCALHOST)
-
-status:
-	docker ps
-
-start:
-	docker-compose -f .srcs/docker-compose.yml start
-
-stop:
-	docker-compose -f .srcs/docker-compose.yml stop
-
 up:
-	docker-compose -d up
+	mkdir -p $(DATA_DIR)/mariadb
+	mkdir -p $(DATA_DIR)/wordpress
+	docker compose up -d --build
 
 down:
-	docker-compose -d down
+	docker compose down
 
-reset:
-	docker-compose down -v
-	docker system prune -a
-
+build:
+	docker compose build
 
 clean:
 	docker compose down -v
 
 fclean: clean
-	docker system prune -a
+	docker image prune -f
 
-re: fclean
-	docker compose build --no-cache
-	docker compose up -d
+re: fclean up
+
+
+status:
+	docker ps
+
+start:
+	docker compose -f docker-compose.yml start
+
+stop:
+	docker compose -f docker-compose.yml stop
