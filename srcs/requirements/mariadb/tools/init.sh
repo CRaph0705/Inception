@@ -4,10 +4,12 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 
     echo "Initializing MariaDB..."
 
-    mysqld --initialize-insecure --user=mysql
-    mysqld_safe &
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
+    mysqld_safe --datadir=/var/lib/mysql &
 
-    sleep 5
+    until mysqladmin ping --silent; do
+        sleep 1
+    done
 
     mysql -u root << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
@@ -26,4 +28,4 @@ EOF
 
 fi
 chown -R mysql:mysql /var/lib/mysql
-exec mysqld_safe
+exec mysqld_safe --datadir=/var/lib/mysql
