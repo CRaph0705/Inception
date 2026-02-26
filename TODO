@@ -49,3 +49,7 @@ mariadb :
 -> check architecture
 
 - version php fpm 7.4 avec bullseye : https://packages.debian.org/bullseye/php-fpm
+
+- heal check
+
+- changer bullseye par bookworm
