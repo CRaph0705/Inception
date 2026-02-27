@@ -25,7 +25,6 @@ FLUSH PRIVILEGES;
 EOF
 
     mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} -S /var/lib/mysql/mysql.sock shutdown
-#    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
 # --socket flag: Ensures connection via Unix socket, which is more reliable during initialization.
 fi
 chown -R mysql:mysql /var/lib/mysql

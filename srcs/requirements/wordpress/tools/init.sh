@@ -4,7 +4,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 echo "waiting MariaDB"
 
-while ! mysqladmin ping -h mariadb --silent; do
+until mysqladmin ping --silent --socket=/var/lib/mysql/mysql.sock; do
     sleep 1
 done
 
