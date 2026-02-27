@@ -7,11 +7,11 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql
     mysqld_safe --datadir=/var/lib/mysql &
 
-    until mysqladmin ping --silent; do
+    until mysqladmin ping --silent --socket=/var/lib/mysql/mysql.sock; do
         sleep 1
     done
 
-    mysql -u root << EOF
+    mysql -u root -S /var/lib/mysql/mysql.sock << EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
@@ -24,8 +24,9 @@ GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
-
+    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} -S /var/lib/mysql/mysql.sock shutdown
+#    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
+# --socket flag: Ensures connection via Unix socket, which is more reliable during initialization.
 fi
 chown -R mysql:mysql /var/lib/mysql
 exec mysqld_safe --datadir=/var/lib/mysql
