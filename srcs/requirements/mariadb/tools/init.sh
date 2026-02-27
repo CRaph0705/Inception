@@ -5,7 +5,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "Initializing MariaDB..."
 
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql
-    mysqld_safe --datadir=/var/lib/mysql &
+    mysqld_safe --user=mysql --datadir=/var/lib/mysql
 
     until mysqladmin ping --silent --socket=/var/lib/mysql/mysql.sock; do
         sleep 1
@@ -23,9 +23,12 @@ CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
-
+    echo "pouet"
     mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} -S /var/lib/mysql/mysql.sock shutdown
+#    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
 # --socket flag: Ensures connection via Unix socket, which is more reliable during initialization.
 fi
+
+echo "toto"
 chown -R mysql:mysql /var/lib/mysql
-exec mysqld_safe --datadir=/var/lib/mysql
+exec mysqld --datadir=/var/lib/mysql

@@ -2,12 +2,12 @@ services:
   mariadb:
     build: srcs/requirements/mariadb
     container_name: mariadb
-    restart: always
+    restart: no
     env_file:
     # - .env
       - .env.local # changer par .env pour correction
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - /home/rcochran/data/mariadb_data:/var/lib/mysql
     networks:
       - inception
 
@@ -42,15 +42,15 @@ volumes:
   mariadb_data:
     driver: local
     driver_opts:
-      type: none
+      type: bind #ext4 #df -T /home/rcochran/data/mariadb
       device: /home/rcochran/data/mariadb
-      # o: bind
+      o: bind
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       device: /home/rcochran/data/wordpress
-      # o: bind
+      o: bind
 
 networks:
   inception:

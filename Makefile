@@ -29,6 +29,7 @@ fclean: clean
 
 re: fclean up
 
+rebuild: down build
 
 status:
 	docker ps
