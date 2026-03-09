@@ -12,9 +12,11 @@ echo "MariaDB OK"
 
 mkdir -p /var/www/html
 cd /var/www/html
+rm -rf /var/www/html/*
 
 if [ ! -f wp-config.php ]; then
 
+    
     wp core download --allow-root
 
     wp config create \
