@@ -1,4 +1,0 @@
-CONTAINER ID   IMAGE                 COMMAND      CREATED          STATUS          PORTS                                     NAMES
-f8d36ce01fce   inception-nginx       "/init.sh"   21 minutes ago   Up 21 minutes   0.0.0.0:443->443/tcp, [::]:443->443/tcp   nginx
-01d1c539e6fe   inception-wordpress   "/init.sh"   21 minutes ago   Up 21 minutes   9000/tcp                                  wordpress
-608f19258dfd   inception-mariadb     "/init.sh"   21 minutes ago   Up 21 minutes   3306/tcp                                  mariadb
