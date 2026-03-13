@@ -3,18 +3,26 @@ set -e
 
 echo "[WordPress] Waiting for MariaDB to be ready..."
 
-until mysqladmin ping -h "$WORDPRESS_DB_HOST" --silent; do
-    echo "[WordPress] MariaDB is not ready yet. Sleeping 2s..."
-    sleep 2
+# Utiliser l'utilisateur WordPress pour la connexion
+until mysqladmin ping -h "${WORDPRESS_DB_HOST}" -u "${WORDPRESS_DB_USER}" -p"${WORDPRESS_DB_PASSWORD}" --silent; do
+    sleep 1
 done
 
 echo "[WordPress] MariaDB is ready!"
 
-cd /var/www/html
+WP_DIR=/var/www/html
+cd "$WP_DIR"
 
+# Vérifier que WP-CLI est disponible
+if ! command -v wp &> /dev/null; then
+    echo "[WordPress] WP-CLI not found! Exiting."
+    exit 1
+fi
+
+# Installer WordPress seulement si wp-config.php n'existe pas
 if [ ! -f wp-config.php ]; then
     echo "[WordPress] Downloading WordPress core..."
-    wp core download --allow-root
+    wp core download --allow-root --locale=fr_FR
 
     echo "[WordPress] Creating wp-config.php..."
     wp config create \
@@ -28,8 +36,8 @@ if [ ! -f wp-config.php ]; then
     wp core install \
         --url="$DOMAIN_NAME" \
         --title="Inception" \
-        --admin_user=$WP_ADMIN_USER \
-        --admin_password=$WP_ADMIN_PASSWORD \
+        --admin_user="$WP_ADMIN_USER" \
+        --admin_password="$WP_ADMIN_PASSWORD" \
         --admin_email="$WP_ADMIN_EMAIL" \
         --skip-email \
         --allow-root
@@ -41,4 +49,4 @@ fi
 
 mkdir -p /run/php
 
-exec php-fpm -F
+exec php-fpm8.2 -F

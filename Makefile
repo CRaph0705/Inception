@@ -5,29 +5,23 @@
 .PHONY : all up down install build start stop status clean fclean re
 
 NAME = inception
-LOCALHOST = http:`/`/127.0.0.1
+LOCALHOST = http://127.0.0.1
 DATA_DIR = /home/rcochran/data
+COMPOSE_FILE = srcs/docker-compose.yml
+COMPOSE = docker compose -f $(COMPOSE_FILE)
 
 all: up
 
 up:
 	mkdir -p $(DATA_DIR)/mariadb
 	mkdir -p $(DATA_DIR)/wordpress
-	docker compose up -d --build
+	$(COMPOSE) up -d --build
 
 down:
-	docker compose down
+	$(COMPOSE) down
 
 build:
-	docker compose build
-
-clean:
-	docker compose down -v
-
-fclean: clean
-	docker image prune -f
-
-re: fclean up
+	$(COMPOSE) build
 
 rebuild: down build
 
@@ -35,7 +29,36 @@ status:
 	docker ps
 
 start:
-	docker compose -f docker-compose.yml start
+	$(COMPOSE) start
 
 stop:
-	docker compose -f docker-compose.yml stop
+	$(COMPOSE) stop
+
+
+clean:
+	$(COMPOSE) down -v
+
+fclean: clean
+	docker image prune -f
+
+re: fclean up
+
+
+
+stopall:
+	docker stop $$(docker ps -aq) || true
+
+removeallcontainers:
+	docker rm $$(docker ps -aq) || true
+
+removeallimg:
+	docker rmi -f $$(docker images -aq) || true
+
+cleanvolumes:
+	docker system prune -a --volumes -f
+
+cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
+
+
+open:
+	

@@ -1,33 +1,38 @@
 #!/bin/bash
+set -e
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+DATA_DIR=/var/lib/mysql
+SOCKET_DIR=/run/mysqld
 
-    echo "Initializing MariaDB..."
+# Créer le dossier de socket si inexistant
+mkdir -p $SOCKET_DIR
+chown -R mysql:mysql $SOCKET_DIR
 
-    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
-    mysqld_safe --user=mysql --datadir=/var/lib/mysql &
+# Initialisation si la DB n'existe pas
+if [ ! -d "$DATA_DIR/mysql" ]; then
+    echo "[MariaDB] Initialisation de la base de données..."
 
-    until mysqladmin ping --silent --socket=/var/lib/mysql/mysql.sock; do
-        sleep 1
+    mariadb-install-db --user=mysql --datadir="$DATA_DIR"
+
+    # Lancer temporairement mysqld pour exécuter le script SQL
+    mysqld --datadir="$DATA_DIR" --socket="$SOCKET_DIR/mysqld.sock" --skip-networking &
+    pid=$!
+
+    until mysqladmin ping --silent; do
+        echo "[MariaDB] Pas encore prêt, attente 5s..."
+        sleep 5
     done
 
-    mysql -u root -S /var/lib/mysql/mysql.sock << EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-DELETE FROM mysql.user WHERE User='';
-DROP DATABASE IF EXISTS test;
-DELETE FROM mysql.db WHERE Db='test';
-FLUSH PRIVILEGES;
+    echo "[MariaDB] Exécution du script SQL..."
+    mysql -u root < /init.sql
 
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
-FLUSH PRIVILEGES;
-EOF
-    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} -S /var/lib/mysql/mysql.sock shutdown
+    # Arrêter le serveur temporaire
+    mysqladmin -u root shutdown
+    wait $pid
 fi
 
-chown -R mysql:mysql /var/lib/mysql
-mkdir -p /run/mysqld
-chown -R mysql:mysql /run/mysqld
+# Assurer les permissions
+chown -R mysql:mysql "$DATA_DIR"
 
-exec mysqld --user=mysql --datadir=/var/lib/mysql --bind-address=0.0.0.0
+echo "[MariaDB] Démarrage en premier plan..."
+exec mysqld --user=mysql --datadir="$DATA_DIR" --socket="$SOCKET_DIR/mysqld.sock" --bind-address=0.0.0.0
