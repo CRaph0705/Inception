@@ -17,12 +17,18 @@ WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}
 WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-admin@example.com}
 DOMAIN_NAME=${DOMAIN_NAME}
 
+# Additional user
+SECOND_USER="editoruser"
+SECOND_EMAIL="editor@example.com"
+SECOND_PASSWORD="editorpassword"
+
 echo "Waiting for MariaDB on $DB_HOST..."
 until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASSWORD" -e "SELECT 1;" &> /dev/null; do
     sleep 1
 done
 echo "MariaDB is ready!"
 
+# Install WordPress if not installed
 if [ ! -f "$WP_DIR/wp-config.php" ]; then
     echo "Installing WordPress..."
     if [ -z "$(ls -A $WP_DIR)" ]; then
@@ -46,6 +52,30 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
         --allow-root
 else
     echo "WordPress is already installed, skipping."
+fi
+
+# Create admin user if it doesn't exist
+if ! wp user get "$WP_ADMIN_USER" --allow-root --path="$WP_DIR" &> /dev/null; then
+    wp user create "$WP_ADMIN_USER" "$WP_ADMIN_EMAIL" \
+        --role=administrator \
+        --user_pass="$WP_ADMIN_PASSWORD" \
+        --allow-root \
+        --path="$WP_DIR"
+    echo "Administrator '$WP_ADMIN_USER' created."
+else
+    echo "Administrator '$WP_ADMIN_USER' already exists."
+fi
+
+# Create a second user if it doesn't exist
+if ! wp user get "$SECOND_USER" --allow-root --path="$WP_DIR" &> /dev/null; then
+    wp user create "$SECOND_USER" "$SECOND_EMAIL" \
+        --role=editor \
+        --user_pass="$SECOND_PASSWORD" \
+        --allow-root \
+        --path="$WP_DIR"
+    echo "Editor '$SECOND_USER' created."
+else
+    echo "Editor '$SECOND_USER' already exists."
 fi
 
 # Run PHP-FPM in the foreground
