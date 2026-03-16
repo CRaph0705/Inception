@@ -46,7 +46,7 @@ Containers communicate through a Docker network.
 Clone the repository :
 
 ```bash
-git clone <repo> inception
+git clone git@github.com:CRaph0705/Inception.git inception
 cd inception
 ```
 
