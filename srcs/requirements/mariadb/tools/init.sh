@@ -1,38 +1,30 @@
 #!/bin/bash
 set -e
 
-DATA_DIR=/var/lib/mysql
-SOCKET_DIR=/run/mysqld
-
-# Créer le dossier de socket si inexistant
-mkdir -p $SOCKET_DIR
-chown -R mysql:mysql $SOCKET_DIR
-
-# Initialisation si la DB n'existe pas
-if [ ! -d "$DATA_DIR/mysql" ]; then
-    echo "[MariaDB] Initialisation de la base de données..."
-
-    mariadb-install-db --user=mysql --datadir="$DATA_DIR"
-
-    # Lancer temporairement mysqld pour exécuter le script SQL
-    mysqld --datadir="$DATA_DIR" --socket="$SOCKET_DIR/mysqld.sock" --skip-networking &
-    pid=$!
-
-    until mysqladmin ping --silent; do
-        echo "[MariaDB] Pas encore prêt, attente 5s..."
-        sleep 5
-    done
-
-    echo "[MariaDB] Exécution du script SQL..."
-    mysql -u root < /init.sql
-
-    # Arrêter le serveur temporaire
-    mysqladmin -u root shutdown
-    wait $pid
+# Check if the database is already initialized
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "Initializing the database..."
+    mysqld --initialize-insecure --user=mysql
 fi
 
-# Assurer les permissions
-chown -R mysql:mysql "$DATA_DIR"
+# Start MariaDB in the background for initialization
+mysqld_safe --skip-networking &
 
-echo "[MariaDB] Démarrage en premier plan..."
-exec mysqld --user=mysql --datadir="$DATA_DIR" --socket="$SOCKET_DIR/mysqld.sock" --bind-address=0.0.0.0
+# Wait for the server to start
+echo "Waiting for MariaDB to start..."
+while ! mysqladmin ping --silent; do
+    sleep 1
+done
+
+# Create the database and user
+mysql -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
+mysql -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';"
+mysql -e "FLUSH PRIVILEGES;"
+
+echo "DB OK..."
+# Temporary shutdown of the server
+mysqladmin -u root shutdown
+
+# Final server start in the foreground (Docker waits for this PID)
+exec mysqld_safe

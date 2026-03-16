@@ -1,52 +1,52 @@
 #!/bin/bash
 set -e
 
-echo "[WordPress] Waiting for MariaDB to be ready..."
+WP_DIR=/var/www/wordpress
 
-# Utiliser l'utilisateur WordPress pour la connexion
-until mysqladmin ping -h "${WORDPRESS_DB_HOST}" -u "${WORDPRESS_DB_USER}" -p"${WORDPRESS_DB_PASSWORD}" --silent; do
+# Create the folder if necessary and set permissions
+mkdir -p "$WP_DIR"
+chown -R www-data:www-data "$WP_DIR"
+
+# Environment variables
+DB_HOST=${WORDPRESS_DB_HOST}
+DB_NAME=${WORDPRESS_DB_NAME}
+DB_USER=${WORDPRESS_DB_USER}
+DB_PASSWORD=${WORDPRESS_DB_PASSWORD}
+WP_ADMIN_USER=${WP_ADMIN_USER}
+WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}
+WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-admin@example.com}
+DOMAIN_NAME=${DOMAIN_NAME}
+
+echo "Waiting for MariaDB on $DB_HOST..."
+until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASSWORD" -e "SELECT 1;" &> /dev/null; do
     sleep 1
 done
+echo "MariaDB is ready!"
 
-echo "[WordPress] MariaDB is ready!"
-
-WP_DIR=/var/www/html
-cd "$WP_DIR"
-
-# Vérifier que WP-CLI est disponible
-if ! command -v wp &> /dev/null; then
-    echo "[WordPress] WP-CLI not found! Exiting."
-    exit 1
-fi
-
-# Installer WordPress seulement si wp-config.php n'existe pas
-if [ ! -f wp-config.php ]; then
-    echo "[WordPress] Downloading WordPress core..."
-    wp core download --allow-root --locale=fr_FR
-
-    echo "[WordPress] Creating wp-config.php..."
-    wp config create \
-        --dbname="$WORDPRESS_DB_NAME" \
-        --dbuser="$WORDPRESS_DB_USER" \
-        --dbpass="$WORDPRESS_DB_PASSWORD" \
-        --dbhost="$WORDPRESS_DB_HOST" \
+if [ ! -f "$WP_DIR/wp-config.php" ]; then
+    echo "Installing WordPress..."
+    if [ -z "$(ls -A $WP_DIR)" ]; then
+        wp core download --path="$WP_DIR" --locale=fr_FR --allow-root
+    else
+        echo "WordPress files already exist, skipping download"
+    fi
+    wp config create --path="$WP_DIR" \
+        --dbname="$DB_NAME" \
+        --dbuser="$DB_USER" \
+        --dbpass="$DB_PASSWORD" \
+        --dbhost="$DB_HOST" \
         --allow-root
-
-    echo "[WordPress] Installing WordPress..."
-    wp core install \
-        --url="$DOMAIN_NAME" \
-        --title="Inception" \
+    wp core install --path="$WP_DIR" \
+        --url="http://$DOMAIN_NAME" \
+        --title="My WordPress Site" \
         --admin_user="$WP_ADMIN_USER" \
         --admin_password="$WP_ADMIN_PASSWORD" \
         --admin_email="$WP_ADMIN_EMAIL" \
         --skip-email \
         --allow-root
-
-    echo "[WordPress] Installation complete!"
 else
-    echo "[WordPress] wp-config.php already exists. Skipping installation."
+    echo "WordPress is already installed, skipping."
 fi
 
-mkdir -p /run/php
-
-exec php-fpm8.2 -F
+# Run PHP-FPM in the foreground
+php-fpm8.2 -F

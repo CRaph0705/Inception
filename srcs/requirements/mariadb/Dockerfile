@@ -1,11 +1,24 @@
 FROM debian:bookworm
 
-RUN apt-get update && apt-get install -y mariadb-server mariadb-client && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install MariaDB and OpenSSL
+RUN apt-get update && apt-get install -y \
+    mariadb-server \
+    mariadb-client \
+    openssl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
+# Create necessary folders
+RUN mkdir -p /run/mysqld /etc/mysql/certs \
+    && chown mysql:mysql /run/mysqld
+
+# Copy MariaDB configuration
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
-COPY tools/init.sql /docker-entrypoint-initdb.d/
+# Copy TLS-ready initialization script
+COPY tools/init.sh /init.sh
+RUN chmod +x /init.sh
 
 EXPOSE 3306
 
-CMD ["mysqld"]
+ENTRYPOINT ["/init.sh"]
