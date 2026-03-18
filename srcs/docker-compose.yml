@@ -53,6 +53,15 @@ services:
     networks:
       - inception
 
+  static-site:
+    build: ./requirements/bonus/static-site
+    container_name: static-site
+    restart: always
+    networks:
+      - inception
+    ports:
+    - "8081:80"
+
 volumes:
   mariadb_data:
   wordpress_data:
