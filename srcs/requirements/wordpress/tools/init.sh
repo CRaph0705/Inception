@@ -36,12 +36,22 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
     else
         echo "WordPress files already exist, skipping download"
     fi
+    # Create wp-config.php
     wp config create --path="$WP_DIR" \
         --dbname="$DB_NAME" \
         --dbuser="$DB_USER" \
         --dbpass="$DB_PASSWORD" \
         --dbhost="$DB_HOST" \
         --allow-root
+
+    # Add Redis configuration if not already present
+    REDIS_HOST=${WP_REDIS_HOST:-redis}   # fallback 'redis'
+    REDIS_PORT=${WP_REDIS_PORT:-6379}    # fallback 6379
+    REDIS_CONFIG_FILE="$WP_DIR/wp-config.php"
+
+    grep -q "WP_REDIS_HOST" "$REDIS_CONFIG_FILE" || sed -i "/^\/\* That's all, stop editing!/i define('WP_REDIS_HOST', '$REDIS_HOST');" "$REDIS_CONFIG_FILE"
+    grep -q "WP_REDIS_PORT" "$REDIS_CONFIG_FILE" || sed -i "/^\/\* That's all, stop editing!/i define('WP_REDIS_PORT', $REDIS_PORT);" "$REDIS_CONFIG_FILE"
+    # Install WordPress core
     wp core install --path="$WP_DIR" \
         --url="http://$DOMAIN_NAME" \
         --title="My WordPress Site" \
@@ -53,6 +63,9 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 else
     echo "WordPress is already installed, skipping."
 fi
+
+# Ensure www-data owns everything
+chown -R www-data:www-data "$WP_DIR"
 
 # Create admin user if it doesn't exist
 if ! wp user get "$WP_ADMIN_USER" --allow-root --path="$WP_DIR" &> /dev/null; then
@@ -77,6 +90,10 @@ if ! wp user get "$SECOND_USER" --allow-root --path="$WP_DIR" &> /dev/null; then
 else
     echo "Editor '$SECOND_USER' already exists."
 fi
+
+# Install Redis extension via WP-CLI
+wp plugin install redis-cache --activate --allow-root --path="$WP_DIR"
+
 
 # Run PHP-FPM in the foreground
 php-fpm8.2 -F
