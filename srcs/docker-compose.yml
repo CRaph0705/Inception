@@ -62,6 +62,22 @@ services:
     ports:
     - "8081:80"
 
+  ftp:
+    build: ./requirements/bonus/ftp
+    container_name: ftp
+    restart: always
+    networks:
+      - inception
+    ports:
+      - "21:21"
+      - "10000-10010:10000-10010"
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    env_file:
+      - .env.local
+    depends_on:
+      - wordpress
+
 volumes:
   mariadb_data:
   wordpress_data:

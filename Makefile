@@ -18,7 +18,7 @@ up:
 	$(COMPOSE) up -d --build
 
 down:
-	$(COMPOSE) down
+	$(COMPOSE) down -v
 
 build:
 	$(COMPOSE) build
@@ -35,8 +35,7 @@ stop:
 	$(COMPOSE) stop
 
 
-clean:
-	$(COMPOSE) down -v
+clean: down
 
 fclean: clean
 	docker image prune -f
@@ -58,7 +57,3 @@ cleanvolumes:
 	docker system prune -a --volumes -f
 
 cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
-
-
-open:
-	

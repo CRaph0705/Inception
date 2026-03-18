@@ -66,6 +66,9 @@ fi
 
 # Ensure www-data owns everything
 chown -R www-data:www-data "$WP_DIR"
+# Allow FTP user to write to uploads
+chown -R www-data:$FTP_USER /var/www/wordpress/wp-content/uploads
+chmod -R 775 /var/www/wordpress/wp-content/uploads
 
 # Create admin user if it doesn't exist
 if ! wp user get "$WP_ADMIN_USER" --allow-root --path="$WP_DIR" &> /dev/null; then
