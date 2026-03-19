@@ -21,5 +21,10 @@ chmod g+s /var/www/wordpress/wp-content/uploads
 mkdir -p /var/run/vsftpd/empty
 chmod 755 /var/run/vsftpd/empty
 
+# Create log folder and file for Fail2ban
+mkdir -p /var/log/vsftpd
+touch /var/log/vsftpd/xferlog
+chmod 644 /var/log/vsftpd/xferlog
+
 # Start vsftpd in foreground
 exec /usr/sbin/vsftpd /etc/vsftpd.conf

@@ -9,10 +9,10 @@ allowipv6 = true
 enabled = true
 port = ftp
 filter = vsftpd
-logpath = /var/log/vsftpd.log
+logpath = /var/log/vsftpd/xferlog
 
 [nginx-http-auth]
-enabled = false
+enabled = true
 port = http, https
 logpath = /var/log/nginx/error.log
 
