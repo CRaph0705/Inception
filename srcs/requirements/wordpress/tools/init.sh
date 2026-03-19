@@ -100,6 +100,38 @@ fi
 # Install Redis extension via WP-CLI
 wp plugin install redis-cache --activate --allow-root --path="$WP_DIR"
 
+# Create .htaccess with correct MIME type for CSS if it doesn't exist
+HTACCESS_FILE="$WP_DIR/.htaccess"
+
+if [ ! -f "$HTACCESS_FILE" ]; then
+    echo "Creating .htaccess with WordPress rules and CSS MIME fix..."
+    cat <<'EOF' > "$HTACCESS_FILE"
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# Force correct MIME type for CSS
+<IfModule mod_mime.c>
+    AddType text/css .css
+</IfModule>
+
+# Force correct MIME type for JS
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+</IfModule>
+EOF
+    chown www-data:www-data "$HTACCESS_FILE"
+    echo ".htaccess created at $HTACCESS_FILE"
+else
+    echo ".htaccess already exists, skipping creation."
+fi
 
 # Run PHP-FPM in the foreground
 php-fpm8.2 -F
