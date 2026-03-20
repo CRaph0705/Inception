@@ -29,17 +29,80 @@ services:
     restart: always
     ports:
       - "443:443"
-      - "80:80"
+      #- "80:80"
     volumes:
       - wordpress_data:/var/www/wordpress
+      - nginx_logs:/var/log/nginx
     depends_on:
       - wordpress
     networks:
       - inception
 
+  adminer:
+    build: ./requirements/bonus/adminer
+    container_name: adminer
+    restart: always
+    networks:
+      - inception
+    ports:
+      - "8080:8080"
+
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    restart: always
+    networks:
+      - inception
+
+  static-site:
+    build: ./requirements/bonus/static-site
+    container_name: static-site
+    restart: always
+    networks:
+      - inception
+    ports:
+    - "8081:80"
+
+  ftp:
+    build: ./requirements/bonus/ftp
+    container_name: ftp
+    restart: always
+    networks:
+      - inception
+    ports:
+      - "21:21"
+      - "10000-10010:10000-10010"
+    volumes:
+      - wordpress_data:/var/www/wordpress
+      - ftp_logs:/var/log/vsftpd
+    env_file:
+      - .env.local
+    depends_on:
+      - wordpress
+
+  fail2ban:
+    build: requirements/bonus/fail2ban
+    container_name: fail2ban
+    restart: always
+    networks:
+      - inception
+    depends_on:
+      - nginx
+      - ftp
+    volumes:
+      - ./requirements/bonus/fail2ban/conf/jail.local:/etc/fail2ban/jail.local:ro
+      - wordpress_data:/var/www/wordpress
+      - nginx_logs:/var/log/nginx
+      - ftp_logs:/var/log/vsftpd
+    cap_add: # required by fail2ban to ban IP
+      - NET_ADMIN
+      - NET_RAW
+
 volumes:
   mariadb_data:
   wordpress_data:
+  nginx_logs:
+  ftp_logs:
 
 networks:
   inception:

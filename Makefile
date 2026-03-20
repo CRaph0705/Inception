@@ -58,7 +58,3 @@ cleanvolumes:
 	docker system prune -a --volumes -f
 
 cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
-
-
-open:
-	
