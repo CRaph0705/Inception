@@ -6,7 +6,7 @@
 
 NAME = inception
 LOCALHOST = http://127.0.0.1
-DATA_DIR = /home/rcochran/data
+DATA_DIR = $(HOME)/data
 COMPOSE_FILE = srcs/docker-compose.yml
 COMPOSE = docker compose -f $(COMPOSE_FILE)
 
@@ -23,10 +23,7 @@ down:
 build:
 	$(COMPOSE) build
 
-rebuild: down build
-
-status:
-	docker ps
+rebuild: down build up
 
 start:
 	$(COMPOSE) start
@@ -34,27 +31,25 @@ start:
 stop:
 	$(COMPOSE) stop
 
-
 clean:
 	$(COMPOSE) down -v
 
 fclean: clean
-	docker image prune -f
+	docker image prune -a -f
 
 re: fclean up
 
 
+# stopall:
+# 	docker stop $$(docker ps -aq) || true
 
-stopall:
-	docker stop $$(docker ps -aq) || true
+# removeallcontainers:
+# 	docker rm $$(docker ps -aq) || true
 
-removeallcontainers:
-	docker rm $$(docker ps -aq) || true
+# removeallimg:
+# 	docker rmi -f $$(docker images -aq) || true
 
-removeallimg:
-	docker rmi -f $$(docker images -aq) || true
+# cleanvolumes:
+# 	docker system prune -a --volumes -f
 
-cleanvolumes:
-	docker system prune -a --volumes -f
-
-cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
+# cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
