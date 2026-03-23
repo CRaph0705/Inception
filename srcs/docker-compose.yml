@@ -81,7 +81,7 @@ services:
       - wordpress
 
   fail2ban:
-    build: requirements/bonus/fail2ban
+    build: ./requirements/bonus/fail2ban
     container_name: fail2ban
     restart: always
     networks:
