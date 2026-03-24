@@ -37,5 +37,8 @@ mkdir -p /var/log/vsftpd
 touch /var/log/vsftpd/xferlog
 chmod 644 /var/log/vsftpd/xferlog
 
+touch /var/log/vsftpd/vsftpd.log
+chmod 644 /var/log/vsftpd/vsftpd.log
+
 # Start vsftpd in foreground
 exec /usr/sbin/vsftpd /etc/vsftpd.conf
