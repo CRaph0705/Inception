@@ -16,9 +16,9 @@ WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-admin@example.com}
 DOMAIN_NAME=${DOMAIN_NAME}
 
 # Additional user
-SECOND_USER="editoruser"
-SECOND_EMAIL="editor@example.com"
-SECOND_PASSWORD="editorpassword"
+SECOND_USER=${WORDPRESS_SECOND_USER}
+SECOND_EMAIL=${WORDPRESS_SECOND_EMAIL}
+SECOND_PASSWORD=${WORDPRESS_SECOND_PASSWORD}
 
 REDIS_HOST=${WP_REDIS_HOST:-redis}  # default 'redis' service
 REDIS_PORT=${WP_REDIS_PORT:-6379}   # default port 6379
@@ -99,6 +99,7 @@ fi
 
 # Install Redis extension via WP-CLI
 wp plugin install redis-cache --activate --allow-root --path="$WP_DIR"
+wp redis enable --allow-root --path="$WP_DIR"
 
 # Create .htaccess with correct MIME type for CSS if it doesn't exist
 HTACCESS_FILE="$WP_DIR/.htaccess"

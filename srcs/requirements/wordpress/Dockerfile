@@ -2,7 +2,7 @@ FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
     php8.2 php8.2-fpm php8.2-mysql mariadb-client \
-    wget unzip curl less sudo openssl \
+    wget unzip curl less sudo openssl redis-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/www/wordpress \
