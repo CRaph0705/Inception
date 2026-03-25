@@ -3,9 +3,6 @@ bantime = 180
 findtime = 600
 maxretry = 3
 
-[Definition]
-failregex = ^.*\[pid \d+\] \[.*\] FTP response: Client "<HOST>", "530.*"
-ignoreregex =
 allowipv6 = auto
 
 # service
