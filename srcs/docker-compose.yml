@@ -90,7 +90,6 @@ services:
       - nginx
       - ftp
     volumes:
-      - ./requirements/bonus/fail2ban/conf/jail.local:/etc/fail2ban/jail.local:ro
       - wordpress_data:/var/www/wordpress
       - nginx_logs:/var/log/nginx
       - ftp_logs:/var/log/vsftpd
