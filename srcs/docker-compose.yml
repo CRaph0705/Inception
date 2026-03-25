@@ -100,9 +100,32 @@ services:
 
 volumes:
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/rcochran/data/mariadb
+
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/rcochran/data/wordpress
+
   nginx_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/rcochran/data/nginx_logs
+
   ftp_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/rcochran/data/ftp_logs
 
 networks:
   inception:

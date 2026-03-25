@@ -15,6 +15,8 @@ all: up
 up:
 	mkdir -p $(DATA_DIR)/mariadb
 	mkdir -p $(DATA_DIR)/wordpress
+	mkdir -p $(DATA_DIR)/nginx_logs
+	mkdir -p $(DATA_DIR)/ftp_logs
 	$(COMPOSE) up -d --build
 
 down:
