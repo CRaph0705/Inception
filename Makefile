@@ -17,7 +17,7 @@ up:
 	mkdir -p $(DATA_DIR)/wordpress
 	mkdir -p $(DATA_DIR)/nginx_logs
 	mkdir -p $(DATA_DIR)/ftp_logs
-	$(COMPOSE) up -d --build
+	$(COMPOSE) up -d
 
 down:
 	$(COMPOSE) down
@@ -25,7 +25,8 @@ down:
 build:
 	$(COMPOSE) build
 
-rebuild: down build up
+rebuild:
+	$(COMPOSE) up -d --build
 
 start:
 	$(COMPOSE) start
