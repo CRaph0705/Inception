@@ -2,7 +2,7 @@
 # must set up your entire application (i.e., it has to build the Docker images using
 # docker-compose.yml).
 
-.PHONY : all up down install build start stop status clean fclean re
+.PHONY : all up down install build start stop status clean fclean re help
 
 NAME = inception
 LOCALHOST = http://127.0.0.1
@@ -42,6 +42,22 @@ fclean: clean
 
 re: fclean up
 
+help:
+	@echo "Usage: make [target]"
+	@echo "Targets:"
+	@echo "  all       - Build and start the application (default)"
+	@echo "  up        - Start the application"
+	@echo "  down      - Stop the application"
+	@echo "  build     - Build the Docker images"
+	@echo "  rebuild   - Rebuild the Docker images and start the application"
+	@echo "  start     - Start the application containers"
+	@echo "  stop      - Stop the application containers"
+	@echo "  clean     - Stop and remove containers, networks, volumes, and images created by 'up'"
+	@echo "  fclean    - Clean all Docker images (use with caution)"
+	@echo "  re        - Clean and rebuild the application"
+
+# check-hosts:
+#	@grep "$(DOMAIN_NAME)" /etc/hosts || echo "Please add $(DOMAIN_NAME) to /etc/hosts"
 
 # stopall:
 # 	docker stop $$(docker ps -aq) || true
