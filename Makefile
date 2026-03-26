@@ -9,6 +9,7 @@ LOCALHOST = http://127.0.0.1
 DATA_DIR = $(HOME)/data
 COMPOSE_FILE = srcs/docker-compose.yml
 COMPOSE = docker compose -f $(COMPOSE_FILE)
+DOMAIN_NAME = rcochran.42.fr
 
 all: up
 
@@ -72,3 +73,6 @@ help:
 # 	docker system prune -a --volumes -f
 
 # cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
+
+# checkports:
+#	 docker ps --format "table {{.Names}}\t{{.Ports}}"
