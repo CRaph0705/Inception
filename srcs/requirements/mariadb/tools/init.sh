@@ -8,8 +8,10 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 fi
 
 # Start MariaDB for initialization
-mysqld_safe --skip-networking
-PID= $!
+mysqld_safe --skip-networking &
+
+PID=$!
+
 # Wait for the server to start
 echo "Waiting for MariaDB to start..."
 while ! mysqladmin ping --silent; do
