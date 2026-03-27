@@ -30,4 +30,4 @@ mysqladmin -u root shutdown
 # Wait PID to avoid zombies process
 wait ${PID}
 # Final server start in the foreground
-exec mysqld_safe --console
+exec mysqld_safe --console --port=3306

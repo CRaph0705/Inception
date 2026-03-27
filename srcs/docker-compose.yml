@@ -1,6 +1,7 @@
 services:
   mariadb:
     build: requirements/mariadb
+    image: mariadb
     container_name: mariadb
     init: true
     restart: always
@@ -13,6 +14,7 @@ services:
 
   wordpress:
     build: requirements/wordpress
+    image: wordpress
     container_name: wordpress
     init: true
     restart: always
@@ -27,6 +29,7 @@ services:
 
   nginx:
     build: requirements/nginx
+    image: nginx
     container_name: nginx
     init: true
     restart: always
@@ -42,6 +45,7 @@ services:
 
   adminer:
     build: ./requirements/bonus/adminer
+    image: adminer
     container_name: adminer
     init: true
     restart: always
@@ -52,6 +56,7 @@ services:
 
   redis:
     build: ./requirements/bonus/redis
+    image: redis
     container_name: redis
     init: true
     restart: always
@@ -60,6 +65,7 @@ services:
 
   static-site:
     build: ./requirements/bonus/static-site
+    image: static-site
     container_name: static-site
     init: true
     restart: always
@@ -70,6 +76,7 @@ services:
 
   ftp:
     build: ./requirements/bonus/ftp
+    image: ftp
     container_name: ftp
     init: true
     restart: always
@@ -88,6 +95,7 @@ services:
 
   fail2ban:
     build: ./requirements/bonus/fail2ban
+    image: fail2ban
     container_name: fail2ban
     init: true
     restart: always
