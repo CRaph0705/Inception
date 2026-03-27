@@ -9,7 +9,7 @@ fi
 
 # Start MariaDB in the background for initialization
 mysqld_safe --skip-networking &
-
+PID= $!
 # Wait for the server to start
 echo "Waiting for MariaDB to start..."
 while ! mysqladmin ping --silent; do
@@ -25,6 +25,7 @@ mysql -e "FLUSH PRIVILEGES;"
 echo "DB OK..."
 # Temporary shutdown of the server
 mysqladmin -u root shutdown
-
-# Final server start in the foreground (Docker waits for this PID)
-exec mysqld_safe
+# Wait PID to avoid zombies process
+wait ${PID}
+# Final server start in the foreground
+exec mysqld_safe --console
