@@ -36,9 +36,10 @@ stop:
 	$(COMPOSE) stop
 
 clean:
-	$(COMPOSE) down -v
+	$(COMPOSE) down
 
-fclean: clean
+fclean:
+	$(COMPOSE) down -v
 	docker image prune -a -f
 
 re: fclean up
@@ -57,8 +58,8 @@ help:
 	@echo "  fclean    - Clean all Docker images (use with caution)"
 	@echo "  re        - Clean and rebuild the application"
 
-# check-hosts:
-#	@grep "$(DOMAIN_NAME)" /etc/hosts || echo "Please add $(DOMAIN_NAME) to /etc/hosts"
+check-hosts:
+	@grep "$(DOMAIN_NAME)" /etc/hosts || echo "Please add $(DOMAIN_NAME) to /etc/hosts"
 
 # stopall:
 # 	docker stop $$(docker ps -aq) || true
@@ -74,5 +75,5 @@ help:
 
 # cleanrestart: stopall removeallcontainers removeallimg cleanvolumes re
 
-# checkports:
-#	 docker ps --format "table {{.Names}}\t{{.Ports}}"
+checkports:
+	 docker ps --format "table {{.Names}}\t{{.Ports}}"
