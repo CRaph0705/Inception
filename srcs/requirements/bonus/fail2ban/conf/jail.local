@@ -1,7 +1,7 @@
 [DEFAULT]
 bantime = 180
 findtime = 600
-maxretry = 3
+maxretry = 1
 
 allowipv6 = auto
 
