@@ -7,8 +7,8 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     mysqld --initialize-insecure --user=mysql
 fi
 
-# Start MariaDB in the background for initialization
-mysqld_safe --skip-networking &
+# Start MariaDB for initialization
+mysqld_safe --skip-networking
 PID= $!
 # Wait for the server to start
 echo "Waiting for MariaDB to start..."
